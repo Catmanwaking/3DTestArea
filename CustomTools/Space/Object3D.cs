@@ -35,7 +35,7 @@ namespace Space
             {
                 throw;
             }
-            
+
         }
     }
 }

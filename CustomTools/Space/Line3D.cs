@@ -65,7 +65,7 @@
         /// <param name="vectorScalar">The scalar for the direction vector.</param>
         /// <returns></returns>
         public Point3D GetPointAt(double vectorScalar)
-        {           
+        {
             return (SupportVector + DirectionVector * vectorScalar).ToPoint();
         }
 

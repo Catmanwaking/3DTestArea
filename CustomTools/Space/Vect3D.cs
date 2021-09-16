@@ -110,19 +110,10 @@ namespace Space
         {
             axis *= (1 / axis.GetLength());
             Matrix rotationMatrix = Matrix.CreateRotationMatrix(axis, angle);
-            Matrix vectorMatrix = new Matrix(this);
-            if (copy)
-            {
-                return (rotationMatrix * vectorMatrix).ToVector();
-            }
-            else
-            {
-                Vect3D tmp = (rotationMatrix * vectorMatrix).ToVector();
-                X = tmp.X;
-                Y = tmp.Y;
-                Z = tmp.Z;
-                return null;
-            }
+            Vect3D rotated = rotationMatrix * this;
+            if (!copy)
+                this = rotated;
+            return rotated;
         }
 
         /// <summary>

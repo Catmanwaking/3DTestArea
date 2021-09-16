@@ -121,11 +121,11 @@ namespace Matrices
         /// </summary>
         /// <param name="row1">First row.</param>
         /// <param name="row2">Second row.</param>
-        public void SwapRows(int row1,int row2)
+        public void SwapRows(int row1, int row2)
         {
             if (row1 == row2) return;
-            double tmp;           
-            for(int i = 0; i < Columns; i++)
+            double tmp;
+            for (int i = 0; i < Columns; i++)
             {
                 tmp = Mtrx[row1, i];
                 Mtrx[row1, i] = Mtrx[row2, i];
@@ -153,7 +153,7 @@ namespace Matrices
         /// <param name="num">Divisor.</param>
         private void DivideRow(int row, double num)
         {
-            for(int i = 0; i < Columns; i++)
+            for (int i = 0; i < Columns; i++)
             {
                 Mtrx[row, i] /= num;
             }
@@ -181,14 +181,14 @@ namespace Matrices
             IsRREF = true;
             int i;
             int lead = 0;
-            for(int r = 0; r < Rows; r++)
+            for (int r = 0; r < Rows; r++)
             {
                 if (Columns <= lead) break;
                 i = r;
-                while(Mtrx[i,lead] == 0.0)
+                while (Mtrx[i, lead] == 0.0)
                 {
                     i++;
-                    if(Rows == i)
+                    if (Rows == i)
                     {
                         i = r;
                         lead++;
@@ -196,10 +196,10 @@ namespace Matrices
                     }
                 }
                 SwapRows(i, r);
-                if(Mtrx[r, lead] != 0.0) DivideRow(r, Mtrx[r, lead]);
-                for(i = 0; i < Rows; i++)
+                if (Mtrx[r, lead] != 0.0) DivideRow(r, Mtrx[r, lead]);
+                for (i = 0; i < Rows; i++)
                 {
-                    if(i != r)
+                    if (i != r)
                     {
                         SubtractRowFromRow(i, r, Mtrx[i, lead]);
                     }
@@ -262,7 +262,7 @@ namespace Matrices
         /// <returns>The identity matrix.</returns>
         public static Matrix CreateAdditiveIdentityMatrix(int size)
         {
-            return new Matrix(size, size);           
+            return new Matrix(size, size);
         }
 
         /// <summary>
@@ -272,21 +272,30 @@ namespace Matrices
         /// <param name="angle">Rotation angle in radians.</param>
         /// <returns>The rotation matrix.</returns>
         public static Matrix CreateRotationMatrix(Vect3D unitVector, double angle)
-        {          
+        {
             if (unitVector.GetLength() != 1) return null; //UNCHECKED this may cause problems
             if (angle == 0) return CreateMultiplicativeIdentityMatrix(3);
             Matrix m = new Matrix(3, 3);
 
+            double cos = Math.Cos(angle);
+            double sin = Math.Sin(angle);
+            double XYcos = unitVector.X * unitVector.Y * (1 - cos);
+            double XZcos = unitVector.X * unitVector.Z * (1 - cos);
+            double YZcos = unitVector.Y * unitVector.Z * (1 - cos);
+            double Xsin = unitVector.X * sin;
+            double Ysin = unitVector.Y * sin;
+            double Zsin = unitVector.Z * sin;
+
             //https://en.wikipedia.org/wiki/Rotation_matrix#Rotation_matrix_from_axis_and_angle
-            m.Mtrx[0, 0] = Math.Cos(angle) + unitVector.X * unitVector.X * (1 - Math.Cos(angle));
-            m.Mtrx[0, 1] = unitVector.X * unitVector.Y * (1 - Math.Cos(angle)) - unitVector.Z * Math.Sin(angle);
-            m.Mtrx[0, 2] = unitVector.X * unitVector.Z * (1 - Math.Cos(angle)) + unitVector.Y * Math.Sin(angle);
-            m.Mtrx[1, 0] = unitVector.Y * unitVector.X * (1 - Math.Cos(angle)) + unitVector.Z * Math.Sin(angle);
-            m.Mtrx[1, 1] = Math.Cos(angle) + unitVector.Y * unitVector.Y * (1 - Math.Cos(angle));
-            m.Mtrx[1, 2] = unitVector.Y * unitVector.Z * (1 - Math.Cos(angle)) - unitVector.X * Math.Sin(angle);
-            m.Mtrx[2, 0] = unitVector.Z * unitVector.X * (1 - Math.Cos(angle)) - unitVector.Y * Math.Sin(angle);
-            m.Mtrx[2, 1] = unitVector.Z * unitVector.Y * (1 - Math.Cos(angle)) + unitVector.X * Math.Sin(angle);
-            m.Mtrx[2, 2] = Math.Cos(angle) + unitVector.Z * unitVector.Z * (1 - Math.Cos(angle));
+            m.Mtrx[0, 0] = cos + unitVector.X * unitVector.X * (1 - cos);
+            m.Mtrx[0, 1] = XYcos - Zsin;
+            m.Mtrx[0, 2] = XZcos + Ysin;
+            m.Mtrx[1, 0] = XYcos + Zsin;
+            m.Mtrx[1, 1] = cos + unitVector.Y * unitVector.Y * (1 - cos);
+            m.Mtrx[1, 2] = YZcos - Xsin;
+            m.Mtrx[2, 0] = XZcos - Ysin;
+            m.Mtrx[2, 1] = YZcos + Xsin;
+            m.Mtrx[2, 2] = cos + unitVector.Z * unitVector.Z * (1 - cos);
 
             return m;
         }
@@ -298,7 +307,7 @@ namespace Matrices
         //Matrix scalar multiplication
         public static Matrix operator *(Matrix matrix, double scalar)
         {
-            for(int row = 0; row < matrix.Rows; row++)
+            for (int row = 0; row < matrix.Rows; row++)
             {
                 for (int col = 0; col < matrix.Columns; col++)
                 {
@@ -327,7 +336,7 @@ namespace Matrices
         //Matrix multiplication
         public static Matrix operator *(Matrix matrix1, Matrix matrix2)
         {
-            if (matrix1.Columns!= matrix2.Rows)
+            if (matrix1.Columns != matrix2.Rows)
                 throw new MatrixDimensionMismatchException("The matrices cannot be multiplied due to unfit dimension sizes");
 
             Matrix matrix3 = new Matrix(matrix1.Rows, matrix2.Columns);
@@ -346,6 +355,19 @@ namespace Matrices
                 }
             }
             return matrix3;
+        }
+
+        public static Vect3D operator *(Matrix matrix, Vect3D vector)
+        {
+            if (matrix.Columns != 3 || matrix.Rows != 3)
+                throw new MatrixDimensionMismatchException("The matrix cannot be multiplied  with the vector due to unfit dimension sizes");
+
+            return new Vect3D
+            {
+                X = matrix.Mtrx[0, 0] * vector.X + matrix.Mtrx[0, 1] * vector.Y + matrix.Mtrx[0, 2] * vector.Z,
+                Y = matrix.Mtrx[1, 0] * vector.X + matrix.Mtrx[1, 1] * vector.Y + matrix.Mtrx[1, 2] * vector.Z,
+                Z = matrix.Mtrx[2, 0] * vector.X + matrix.Mtrx[2, 1] * vector.Y + matrix.Mtrx[2, 2] * vector.Z
+            };
         }
         #endregion
     }

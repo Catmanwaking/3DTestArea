@@ -114,10 +114,10 @@ namespace SpaceObjectVisualization.Tools
         /// <param name="screenHeight">Height of the screen.</param>
         public Camera(int screenWidth, int screenHeight)
         {
-            CameraFieldOfView = 90 / Relation3D.radianToDegreeConst;           
+            CameraFieldOfView = 90 / Relation3D.radianToDegreeConst;
             AspectRatio = (screenWidth / (double)screenHeight);
             widthScalar = Math.Sin((Math.PI - CameraFieldOfView) / 2) / Math.Sin(CameraFieldOfView);
-            heightScalar = Math.Sin((Math.PI - CameraFieldOfView / AspectRatio) / 2) / Math.Sin(CameraFieldOfView / AspectRatio);        
+            heightScalar = Math.Sin((Math.PI - CameraFieldOfView / AspectRatio) / 2) / Math.Sin(CameraFieldOfView / AspectRatio);
             screen = new Screen(screenWidth, screenHeight);
 
             CreateTestTriangles();
@@ -145,12 +145,12 @@ namespace SpaceObjectVisualization.Tools
         public void DetermineTrianglesInRange()
         {
             //TODO can be heavly optimized by reading directly from the objects verticies. CREATE BACKUP WHEN EDITING.
-            
+
             Vect3D toPointVector;
             Stack<int> trianglesIndex = new Stack<int>();
-            foreach(Triangle3D triangle in triangles)
+            foreach (Triangle3D triangle in triangles)
             {
-                foreach(Point3D point in triangle.coordinates)
+                foreach (Point3D point in triangle.coordinates)
                 {
                     toPointVector = new Vect3D(CameraPosition, point);
                     if (Relation3D.AngleBetween(toPointVector, cameraLeftPlaneNormalVector) > Math.PI / 2) continue;
@@ -161,7 +161,7 @@ namespace SpaceObjectVisualization.Tools
                     break;
                 }
             }
-            trianglesOnScreenIndex = trianglesIndex.ToArray();            
+            trianglesOnScreenIndex = trianglesIndex.ToArray();
         }
 
         public void BackFaceCulling()
@@ -178,7 +178,7 @@ namespace SpaceObjectVisualization.Tools
                 if (Vect3D.VectorProduct(cornerVector1, cornerVector2) * camToCorner >= 0.0)
                 {
                     trianglesIndex.Push(index);
-                }                
+                }
             }
             trianglesOnScreenIndex = trianglesIndex.ToArray();
         }
@@ -217,7 +217,7 @@ namespace SpaceObjectVisualization.Tools
                     angleTop = Relation3D.AngleBetween(toPointHorizontalPlaneNormalVector, cameraTopPlaneNormalVector);
 
                     toPointVerticalPlaneNormalVector.SwitchOrientation();
-                    toPointHorizontalPlaneNormalVector.SwitchOrientation();                    
+                    toPointHorizontalPlaneNormalVector.SwitchOrientation();
 
                     screenScalar = widthScalar * Math.Sin(angleLeft) / Math.Sin(Math.PI - angleLeft - (Math.PI - CameraFieldOfView) / 2);
                     if (Relation3D.AngleBetween(toPointVerticalPlaneNormalVector, cameraRightPlaneNormalVector) > CameraFieldOfView)
@@ -228,7 +228,7 @@ namespace SpaceObjectVisualization.Tools
                     if (Relation3D.AngleBetween(toPointHorizontalPlaneNormalVector, cameraBottomPlaneNormalVector) > CameraFieldOfView / AspectRatio)
                         screenScalar *= -1;
                     triangleCoordinatesOnScreen[i].Y = Math.Round(screenScalar * screen.Height, 0);
-                }                
+                }
                 screen.AddTriangleToScreen(triangleCoordinatesOnScreen);
             }
         }
@@ -337,13 +337,13 @@ namespace SpaceObjectVisualization.Tools
             }
             Matrix rotationMatrix = Matrix.CreateRotationMatrix(rotationAxis, angle);
 
-            cameraDirectionUnitVector = (rotationMatrix * new Matrix(cameraDirectionUnitVector)).ToVector();
-            cameraVerticalUnitVector = (rotationMatrix * new Matrix(cameraVerticalUnitVector)).ToVector();
-            cameraHorizontalUnitVector = (rotationMatrix * new Matrix(cameraHorizontalUnitVector)).ToVector();
-            cameraLeftPlaneNormalVector = (rotationMatrix * new Matrix(cameraLeftPlaneNormalVector)).ToVector();
-            cameraRightPlaneNormalVector = (rotationMatrix * new Matrix(cameraRightPlaneNormalVector)).ToVector();
-            cameraTopPlaneNormalVector = (rotationMatrix * new Matrix(cameraTopPlaneNormalVector)).ToVector();
-            cameraBottomPlaneNormalVector = (rotationMatrix * new Matrix(cameraBottomPlaneNormalVector)).ToVector();
+            cameraDirectionUnitVector = rotationMatrix * cameraDirectionUnitVector;
+            cameraVerticalUnitVector = rotationMatrix * cameraVerticalUnitVector;
+            cameraHorizontalUnitVector = rotationMatrix * cameraHorizontalUnitVector;
+            cameraLeftPlaneNormalVector = rotationMatrix * cameraLeftPlaneNormalVector;
+            cameraRightPlaneNormalVector = rotationMatrix * cameraRightPlaneNormalVector;
+            cameraTopPlaneNormalVector = rotationMatrix * cameraTopPlaneNormalVector;
+            cameraBottomPlaneNormalVector = rotationMatrix * cameraBottomPlaneNormalVector;
 
             DetermineTrianglesInRange();
             ProjectToScreen();

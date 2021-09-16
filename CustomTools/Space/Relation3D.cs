@@ -10,7 +10,7 @@ namespace Space
     public static class Relation3D
     {
         #region Constants
-        
+
         /// <summary>
         /// Represents one radian in degrees.
         /// </summary>
@@ -53,7 +53,7 @@ namespace Space
             else if (type == -1) //infinite soulutions
             {
                 intersection = true;
-                if(!IsParallel(line1, line2)) //actually not infinite solutions
+                if (!IsParallel(line1, line2)) //actually not infinite solutions
                 {
                     linearEquation = new Matrix(line1, line2, true);
                     linearEquation.ToRREF();

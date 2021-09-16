@@ -63,7 +63,7 @@
         /// <returns></returns>
         public Point3D GetPointAt(double vectorScalar1, double vectorScalar2)
         {
-            return (SupportVector + DirectionVectors[0] * vectorScalar1 
+            return (SupportVector + DirectionVectors[0] * vectorScalar1
                 + DirectionVectors[1] * vectorScalar2).ToPoint();
         }
 

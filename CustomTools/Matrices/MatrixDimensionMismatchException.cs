@@ -18,7 +18,7 @@ namespace Matrices
 
         public MatrixDimensionMismatchException(string message, Exception inner) : base(message, inner) { }
 
-        protected MatrixDimensionMismatchException(SerializationInfo info, StreamingContext context): base(info, context)
+        protected MatrixDimensionMismatchException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
             ResourceReferenceProperty = info.GetString("ResourceReferenceProperty");
         }

@@ -12,7 +12,7 @@ namespace SpaceObjectVisualization.Tools
     /// Provides functions to convert points of triangles into polygons for a canvas
     /// </summary>
     class Screen
-    {    
+    {
         #region Variables
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace SpaceObjectVisualization.Tools
         public Screen(int width, int height)
         {
             Width = width;
-            Height = height;            
+            Height = height;
         }
 
         #endregion
@@ -75,7 +75,7 @@ namespace SpaceObjectVisualization.Tools
         /// <param name="triangle">An array containing three coordinates.</param>
         public void AddTriangleToScreen(Point[] triangle)
         {
-            if(triangle.Length == 3) trianglesOnScreen.Add(triangle);
+            if (triangle.Length == 3) trianglesOnScreen.Add(triangle);
         }
 
         /// <summary>
